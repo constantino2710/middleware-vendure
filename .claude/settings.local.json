@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($path = \"c:\\\\Users\\\\joaoc\\\\OneDrive\\\\Área de Trabalho\\\\Confidencial\\\\Códigos\\\\Faculdade\\\\projeto arq sistema\\\\docs\\\\contexto-geral.doc\"; $word = New-Object -ComObject Word.Application; $word.Visible = $false; $doc = $word.Documents.Open\\($path\\); $doc.Content.Text; $doc.Close\\(\\); $word.Quit\\(\\))",
+      "PowerShell($path = \"c:\\\\Users\\\\joaoc\\\\OneDrive\\\\Área de Trabalho\\\\Confidencial\\\\Códigos\\\\Faculdade\\\\projeto arq sistema\\\\docs\\\\contexto-geral.doc\"; $bytes = [System.IO.File]::ReadAllBytes\\($path\\); $bytes[0..7] | ForEach-Object { $_.ToString\\(\"X2\"\\) })",
+      "Bash(rm -f middleware/go.mod middleware/cmd/main.go middleware/controllers/order_controller.go middleware/services/order_service.go middleware/clients/payment_client.go middleware/messaging/publisher.go middleware/middleware/auth_middleware.go middleware/middleware/correlation_middleware.go middleware/config/config.go middleware/Dockerfile services/payment-service/go.mod services/payment-service/cmd/main.go services/payment-service/Dockerfile services/notification-service/go.mod services/notification-service/cmd/main.go services/notification-service/Dockerfile)",
+      "Bash(rmdir middleware/cmd middleware/controllers middleware/services middleware/clients middleware/messaging middleware/middleware middleware/config services/payment-service/cmd services/notification-service/cmd)"
+    ]
+  }
+}
