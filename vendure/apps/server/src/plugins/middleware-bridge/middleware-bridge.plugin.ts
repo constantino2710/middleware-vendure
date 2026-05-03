@@ -13,6 +13,7 @@ const loggerCtx = 'MiddlewareBridgePlugin';
 
 @VendurePlugin({
     imports: [PluginCommonModule],
+    compatibility: '^3.0.0',
 })
 export class MiddlewareBridgePlugin implements OnApplicationBootstrap {
     constructor(private eventBus: EventBus) {}

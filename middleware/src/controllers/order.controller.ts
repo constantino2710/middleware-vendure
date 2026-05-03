@@ -1,21 +1,20 @@
-// Pessoa 1 — Core Middleware
-//
-// @Controller('process-order')
-// export class OrderController {
-//   constructor(private readonly orderService: OrderService) {}
-//
-//   @Post()
-//   @UseGuards(JwtAuthGuard, RolesGuard)
-//   @Roles('USER', 'ADMIN')
-//   async process(
-//     @Body() dto: ProcessOrderDto,
-//     @Req() req: Request & { correlationId: string },
-//   ): Promise<ProcessOrderResponse> {
-//     return this.orderService.process(dto, req.correlationId);
-//   }
-// }
-//
-// Status codes (seção 6 contexto-geral):
-//   200 OK              → status SUCCESS / FAILED / PENDING
-//   401 Unauthorized    → JwtAuthGuard rejeitou
-//   500 Internal        → erro inesperado
+import { Body, Controller, Headers, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { randomUUID } from 'crypto';
+
+import { OrderService } from '../services/order.service';
+import { ProcessOrderDto, ProcessOrderResponse } from './dto/process-order.dto';
+
+@Controller('process-order')
+export class OrderController {
+    constructor(private readonly orderService: OrderService) {}
+
+    @Post()
+    @HttpCode(HttpStatus.OK)
+    async process(
+        @Body() dto: ProcessOrderDto,
+        @Headers('x-correlation-id') headerCorrelationId?: string,
+    ): Promise<ProcessOrderResponse> {
+        const correlationId = headerCorrelationId ?? randomUUID();
+        return this.orderService.process(dto, correlationId);
+    }
+}
