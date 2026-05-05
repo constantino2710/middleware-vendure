@@ -5,6 +5,8 @@ import configuration from './config/configuration';
 import { HealthController } from './controllers/health.controller';
 import { OrderController } from './controllers/order.controller';
 import { OrderService } from './services/order.service';
+import { HttpPaymentClient } from './clients/payment.client';
+import { PAYMENT_CLIENT } from './services/order.service';
 
 @Module({
     imports: [
@@ -14,6 +16,12 @@ import { OrderService } from './services/order.service';
         }),
     ],
     controllers: [HealthController, OrderController],
-    providers: [OrderService],
+    providers: [
+    OrderService,
+    { 
+      provide: PAYMENT_CLIENT, 
+      useClass: HttpPaymentClient 
+    }
+  ],
 })
 export class AppModule {}
