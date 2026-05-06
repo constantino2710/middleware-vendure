@@ -91,3 +91,12 @@ Mesmo passo para `services/payment-service` e `services/notification-service`.
 | 4 | Observabilidade | `middleware/src/middlewares/correlation.interceptor.ts`, `metrics.controller.ts` |
 | 5 | Segurança | `middleware/src/middlewares/jwt-auth.guard.ts`, `roles.guard.ts` |
 | 6 | Integração + Infra | `vendure/`, `docker-compose.yml` |
+
+---
+
+### Contribuição Pessoa 2: Resiliência no Cliente de Pagamentos
+O serviço de integração de pagamentos (`HttpPaymentClient`) foi implementado com foco na estabilidade do sistema em rede:
+- **Tolerância a Falhas:** Utilização da biblioteca `p-retry` para repetir requisições HTTP que falhem por alguma instabilidade.
+- **Backoff Exponencial:** Configuração de 3 tentativas automáticas com espaçamento de tempo crescente, evitando sobrecarregar o serviço externo.
+- **Fallback Seguro (Plano B):** Em caso de falha total da rede ou timeout, a aplicação não "quebra" (crash); em vez disso, retorna o estado `pending`.
+- **Injeção de Dependências:** O cliente foi desacoplado e injetado no `AppModule` através do token `PAYMENT_CLIENT`.
