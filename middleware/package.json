@@ -8,7 +8,8 @@
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "mock:payment": "ts-node --transpile-only test/mock-payment-service.ts"
   },
   "jest": {
     "moduleFileExtensions": [

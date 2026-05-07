@@ -9,7 +9,23 @@
       "Bash(npm i *)",
       "Bash(npx patch-package *)",
       "Bash(git check-ignore *)",
-      "Bash(echo \"exit=$?\")"
+      "Bash(echo \"exit=$?\")",
+      "Bash(rm -f tsconfig.tsbuildinfo)",
+      "Bash(npm run *)",
+      "Bash(pkill -f _mock_payment.py)",
+      "Bash(pkill -f \"node dist/main\")",
+      "Bash(python \"c:/dev/projeto-arq-sistemas/docs/_mock_payment.py\" declined)",
+      "Bash(HTTP_PORT=8090 PAYMENT_SERVICE_URL=http://localhost:8081 JWT_SECRET=x node dist/main.js)",
+      "Bash(curl.exe -s -w '\\\\n[HTTP %{http_code}]\\\\n' -X POST http://localhost:8090/process-order -H 'Content-Type: application/json' -H 'X-Correlation-ID: t-declined' --data-raw '{\"orderId\":\"O2\",\"customerId\":\"C2\",\"total\":50,\"currency\":\"BRL\"}')",
+      "Bash(pkill -9 -f _mock_payment)",
+      "Bash(pkill -9 -f \"node dist/main\")",
+      "Bash(pkill -9 -f mock-payment-service)",
+      "Bash(pkill -9 -f \"node test/mock\")",
+      "Bash(netstat -ano)",
+      "PowerShell(Stop-Process -Id 4348,29436,10972 -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-NetTCPConnection -State Listen -LocalPort 8081,8090 -ErrorAction SilentlyContinue)",
+      "PowerShell($pids = \\(Get-NetTCPConnection -State Listen -LocalPort 8081 -ErrorAction SilentlyContinue\\).OwningProcess | Sort-Object -Unique; if \\($pids\\) { $pids | ForEach-Object { Write-Output \"matando PID $_\"; Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }; Start-Sleep 1 } ; Get-NetTCPConnection -State Listen -LocalPort 8081 -ErrorAction SilentlyContinue | Select-Object LocalPort, OwningProcess; Write-Output 'porta 8081 limpa')",
+      "Bash(npm test *)"
     ]
   }
 }
