@@ -87,4 +87,20 @@ describe('OrderService', () => {
 
         expect(res.status).toBe('SUCCESS');
     });
+
+    it('still returns SUCCESS when publishing order.paid fails', async () => {
+        const payment = makePaymentClient({ status: 'approved' });
+        const publisher: jest.Mocked<Publisher> = {
+            publish: jest.fn().mockRejectedValue(new Error('rabbit down')),
+        };
+        const service = new OrderService(payment, publisher);
+
+        const res = await service.process(dto(), cid);
+
+        expect(res.status).toBe('SUCCESS');
+        expect(publisher.publish).toHaveBeenCalledWith(
+            'order.paid',
+            expect.objectContaining({ orderId: 'ORD-1', status: 'PAID', correlation_id: cid }),
+        );
+    });
 });

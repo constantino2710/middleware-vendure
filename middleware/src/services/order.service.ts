@@ -76,11 +76,18 @@ export class OrderService {
             this.logger.warn(`Publisher not registered — skipping ${routingKey} cid=${correlationId}`);
             return;
         }
-        await this.publisher.publish(routingKey, {
-            orderId: dto.orderId,
-            status,
-            timestamp: new Date().toISOString(),
-            correlation_id: correlationId,
-        });
+        try {
+            await this.publisher.publish(routingKey, {
+                orderId: dto.orderId,
+                status,
+                timestamp: new Date().toISOString(),
+                correlation_id: correlationId,
+            });
+        } catch (err) {
+            const message = err instanceof Error ? err.message : String(err);
+            this.logger.error(
+                `publish_error routingKey=${routingKey} order=${dto.orderId} cid=${correlationId} err=${message}`,
+            );
+        }
     }
 }
