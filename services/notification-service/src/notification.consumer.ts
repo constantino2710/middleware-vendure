@@ -2,16 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
 import { PinoLogger } from 'nestjs-pino';
 
-export const ORDERS_EVENTS_EXCHANGE = 'orders.events';
-
-type OrderEventStatus = 'PAID' | 'FAILED';
-
-interface OrderEvent {
-    orderId: string;
-    status: OrderEventStatus;
-    timestamp: string;
-    correlation_id: string;
-}
+import {
+    ORDER_FAILED_ROUTING_KEY,
+    ORDER_PAID_ROUTING_KEY,
+    ORDERS_EVENTS_EXCHANGE,
+    OrderEvent,
+} from './order-event';
 
 @Injectable()
 export class NotificationConsumer {
@@ -21,7 +17,7 @@ export class NotificationConsumer {
 
     @RabbitSubscribe({
         exchange: ORDERS_EVENTS_EXCHANGE,
-        routingKey: ['order.paid', 'order.failed'],
+        routingKey: [ORDER_PAID_ROUTING_KEY, ORDER_FAILED_ROUTING_KEY],
         queue: 'notifications',
         queueOptions: { durable: true },
     })

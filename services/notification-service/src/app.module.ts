@@ -3,7 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { LoggerModule } from 'nestjs-pino';
 
-import { NotificationConsumer, ORDERS_EVENTS_EXCHANGE } from './notification.consumer';
+import { ORDERS_EVENTS_EXCHANGE } from './order-event';
+import { NotificationConsumer } from './notification.consumer';
 
 @Module({
     imports: [

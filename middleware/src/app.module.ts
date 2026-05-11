@@ -10,7 +10,8 @@ import { OrderController } from './controllers/order.controller';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
-import { RabbitMqPublisher, ORDERS_EVENTS_EXCHANGE } from './messaging/publisher.service';
+import { ORDERS_EVENTS_EXCHANGE } from './messaging/order-event';
+import { RabbitMqPublisher } from './messaging/publisher.service';
 import { OrderService, PAYMENT_CLIENT, PUBLISHER } from './services/order.service';
 
 @Module({
