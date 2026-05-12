@@ -8,6 +8,12 @@ import { OrderService } from './services/order.service';
 import { HttpPaymentClient } from './clients/payment.client';
 import { PAYMENT_CLIENT } from './services/order.service';
 
+import { APP_GUARD } from '@nestjs/core';
+
+import { JwtStrategy } from './auth/strategies/jwt.strategy';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { RolesGuard } from './auth/guards/roles.guard';
+
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -21,7 +27,19 @@ import { PAYMENT_CLIENT } from './services/order.service';
     { 
       provide: PAYMENT_CLIENT, 
       useClass: HttpPaymentClient 
-    }
+    },
+
+    JwtStrategy,
+
+    {
+        provide: APP_GUARD,
+        useClass: JwtAuthGuard,
+    },
+
+    {
+        provide: APP_GUARD,
+        useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {}
