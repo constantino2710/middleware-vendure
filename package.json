@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "pino-http": "^10.5.0",
+    "pino-nestjs": "^0.1.3"
+  }
+}
