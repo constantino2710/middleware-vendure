@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { Logger } from 'pino-nestjs';
+import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
 import { APP_CONFIG, AppConfig } from './config/configuration';

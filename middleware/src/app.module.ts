@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { LoggerModule } from 'pino-nestjs';
+import { LoggerModule } from 'nestjs-pino';
 
 import configuration from './config/configuration';
 import { HealthController } from './controllers/health.controller';
@@ -15,16 +15,25 @@ import { PAYMENT_CLIENT } from './services/order.service';
             isGlobal: true,
             load: [configuration],
         }),
-        LoggerModule.forRoot()
+        LoggerModule.forRoot({
+            pinoHttp: {
+                level: process.env.LOG_LEVEL ?? 'info',
+                genReqId: (req) =>
+                    req.headers['x-correlation-id']?.toString() ?? crypto.randomUUID(),
+                customProps: () => ({ service: 'middleware' }),
+                transport: process.env.NODE_ENV !== 'production'
+                    ? { target: 'pino-pretty' }
+                    : undefined,
+            },
+        }),
     ],
-
     controllers: [HealthController, OrderController],
     providers: [
-    OrderService,
-    { 
-      provide: PAYMENT_CLIENT, 
-      useClass: HttpPaymentClient 
-    }
-  ],
+        OrderService,
+        { 
+            provide: PAYMENT_CLIENT, 
+            useClass: HttpPaymentClient 
+        }
+    ],
 })
 export class AppModule {}
