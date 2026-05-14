@@ -7,13 +7,17 @@
 //   npm run mock:payment -- declined   # 200 {"status":"declined"}
 //   npm run mock:payment -- error      # 500 sempre (forca retry+fallback)
 //   npm run mock:payment -- timeout    # nao responde (forca timeout 2s)
+//
+// Porta: padrao 8081. Para usar outra, defina MOCK_PAYMENT_PORT:
+//   $env:MOCK_PAYMENT_PORT=8091; npm run mock:payment -- approved   (PowerShell)
+//   MOCK_PAYMENT_PORT=8091 npm run mock:payment -- approved         (bash)
 
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 
 type Mode = 'approved' | 'declined' | 'error' | 'timeout';
 
 const mode = (process.argv[2] ?? 'approved') as Mode;
-const port = 8081;
+const port = Number(process.env.MOCK_PAYMENT_PORT ?? 8081);
 
 const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     if (req.method !== 'POST') {
