@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
-
+import { MetricsService } from './services/metrics.service';
 import configuration from './config/configuration';
 import { HealthController } from './controllers/health.controller';
 import { OrderController } from './controllers/order.controller';
@@ -30,6 +30,7 @@ import { PAYMENT_CLIENT } from './services/order.service';
     controllers: [HealthController, OrderController],
     providers: [
         OrderService,
+        MetricsService,
         { 
             provide: PAYMENT_CLIENT, 
             useClass: HttpPaymentClient 
