@@ -4,6 +4,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { MetricsService } from './services/metrics.service';
 import { MetricsController } from './controllers/metrics.controller';
 import { CorrelationInterceptor } from './middlewares/correlation.interceptor';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import configuration from './config/configuration';
 import { HealthController } from './controllers/health.controller';
 import { OrderController } from './controllers/order.controller';
@@ -36,6 +37,10 @@ import { PAYMENT_CLIENT } from './services/order.service';
         { 
             provide: PAYMENT_CLIENT, 
             useClass: HttpPaymentClient 
+        }
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: CorrelationInterceptor,
         }
     ],
 })
