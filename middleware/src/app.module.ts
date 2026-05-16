@@ -37,7 +37,7 @@ import { PAYMENT_CLIENT } from './services/order.service';
         { 
             provide: PAYMENT_CLIENT, 
             useClass: HttpPaymentClient 
-        }
+        },
         {
             provide: APP_INTERCEPTOR,
             useClass: CorrelationInterceptor,
