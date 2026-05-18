@@ -29,7 +29,7 @@ import { OrderService, PAYMENT_CLIENT, PUBLISHER } from './services/order.servic
                 },
             ],
             uri: process.env.RABBITMQ_URL ?? 'amqp://guest:guest@localhost:5672/',
-            connectionInitOptions: { wait: true },
+            connectionInitOptions: { wait: false },
         }),
     ],
     controllers: [HealthController, OrderController],

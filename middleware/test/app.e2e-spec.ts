@@ -4,13 +4,19 @@ import { sign } from 'jsonwebtoken';
 import request from 'supertest';
 
 import { AppModule } from '../src/app.module';
-import { PAYMENT_CLIENT, PaymentClient } from '../src/services/order.service';
+import {
+    PAYMENT_CLIENT,
+    PUBLISHER,
+    PaymentClient,
+    Publisher,
+} from '../src/services/order.service';
 
 const SECRET = 'test-secret';
 
 describe('Middleware (E2E)', () => {
     let app: INestApplication;
     let payment: jest.Mocked<PaymentClient>;
+    let publisher: jest.Mocked<Publisher>;
 
     beforeAll(async () => {
         process.env.JWT_SECRET = SECRET;
@@ -18,13 +24,17 @@ describe('Middleware (E2E)', () => {
         process.env.RABBITMQ_URL = 'amqp://test';
 
         const paymentMock = { pay: jest.fn() } as jest.Mocked<PaymentClient>;
+        const publisherMock = { publish: jest.fn() } as jest.Mocked<Publisher>;
         payment = paymentMock;
+        publisher = publisherMock;
 
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
         })
             .overrideProvider(PAYMENT_CLIENT)
             .useValue(paymentMock)
+            .overrideProvider(PUBLISHER)
+            .useValue(publisherMock)
             .compile();
 
         app = moduleFixture.createNestApplication();
@@ -44,6 +54,7 @@ describe('Middleware (E2E)', () => {
 
     beforeEach(() => {
         payment.pay.mockReset();
+        publisher.publish.mockReset();
     });
 
     const validJwt = (roles: string[] = ['service']) =>
