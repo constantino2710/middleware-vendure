@@ -67,23 +67,13 @@ export class OrderService {
 
             this.metricsService?.httpRequestsTotal.inc({ route: '/process-order', status: '200' });
             this.metricsService?.paymentOutcomes.inc({ status: result.status });
-
             if (result.status === 'approved') {
-                await this.emit('order.paid', dto, 'PAID', correlationId);
+                await this.emit(ORDER_PAID_ROUTING_KEY, dto, 'PAID', correlationId);
                 return { status: 'SUCCESS', message: 'payment approved' };
             }
-        if (result.status === 'approved') {
-            await this.emit(ORDER_PAID_ROUTING_KEY, dto, 'PAID', correlationId);
-            return { status: 'SUCCESS', message: 'payment approved' };
-        }
-
-        if (result.status === 'declined') {
-            await this.emit(ORDER_FAILED_ROUTING_KEY, dto, 'FAILED', correlationId);
-            return { status: 'FAILED', message: result.message ?? 'payment declined' };
-        }
 
             if (result.status === 'declined') {
-                await this.emit('order.failed', dto, 'FAILED', correlationId);
+                await this.emit(ORDER_FAILED_ROUTING_KEY, dto, 'FAILED', correlationId);
                 return { status: 'FAILED', message: result.message ?? 'payment declined' };
             }
 
