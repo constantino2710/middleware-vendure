@@ -9,7 +9,10 @@
     "start:prod": "node dist/main.js",
     "test": "jest",
     "test:watch": "jest --watch",
-    "mock:payment": "ts-node --transpile-only test/mock-payment-service.ts"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:all": "npm test && npm run test:e2e",
+    "mock:payment": "ts-node --transpile-only test/mock-payment-service.ts",
+    "generate:jwt": "ts-node --transpile-only test/generate-jwt.ts"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -56,13 +59,16 @@
   "devDependencies": {
     "@nestjs/cli": "^10.4.5",
     "@nestjs/schematics": "^10.1.4",
+    "@nestjs/testing": "^10.4.22",
     "@types/amqplib": "^0.10.5",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.7.4",
     "@types/passport-jwt": "^4.0.1",
+    "@types/supertest": "^7.2.0",
     "@types/uuid": "^10.0.0",
     "jest": "^30.3.0",
+    "supertest": "^7.2.2",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",

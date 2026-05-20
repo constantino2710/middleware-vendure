@@ -4,6 +4,13 @@ import {
     ProcessOrderResponse,
 } from '../controllers/dto/process-order.dto';
 import { MetricsService } from './metrics.service';
+import {
+    ORDER_FAILED_ROUTING_KEY,
+    ORDER_PAID_ROUTING_KEY,
+    OrderEvent,
+    OrderEventStatus,
+    OrderRoutingKey,
+} from '../messaging/order-event';
 
 export type PaymentResultStatus = 'approved' | 'declined' | 'fallback';
 
@@ -17,7 +24,7 @@ export interface PaymentClient {
 }
 
 export interface Publisher {
-    publish(routingKey: string, payload: Record<string, unknown>): Promise<void>;
+    publish(routingKey: OrderRoutingKey, payload: OrderEvent): Promise<void>;
 }
 
 export const PAYMENT_CLIENT = 'PAYMENT_CLIENT';
@@ -65,6 +72,15 @@ export class OrderService {
                 await this.emit('order.paid', dto, 'PAID', correlationId);
                 return { status: 'SUCCESS', message: 'payment approved' };
             }
+        if (result.status === 'approved') {
+            await this.emit(ORDER_PAID_ROUTING_KEY, dto, 'PAID', correlationId);
+            return { status: 'SUCCESS', message: 'payment approved' };
+        }
+
+        if (result.status === 'declined') {
+            await this.emit(ORDER_FAILED_ROUTING_KEY, dto, 'FAILED', correlationId);
+            return { status: 'FAILED', message: result.message ?? 'payment declined' };
+        }
 
             if (result.status === 'declined') {
                 await this.emit('order.failed', dto, 'FAILED', correlationId);
@@ -78,20 +94,27 @@ export class OrderService {
     }
 
     private async emit(
-        routingKey: string,
+        routingKey: OrderRoutingKey,
         dto: ProcessOrderDto,
-        status: 'PAID' | 'FAILED',
+        status: OrderEventStatus,
         correlationId: string,
     ): Promise<void> {
         if (!this.publisher) {
             this.logger.warn(`Publisher not registered — skipping ${routingKey} cid=${correlationId}`);
             return;
         }
-        await this.publisher.publish(routingKey, {
-            orderId: dto.orderId,
-            status,
-            timestamp: new Date().toISOString(),
-            correlation_id: correlationId,
-        });
+        try {
+            await this.publisher.publish(routingKey, {
+                orderId: dto.orderId,
+                status,
+                timestamp: new Date().toISOString(),
+                correlation_id: correlationId,
+            });
+        } catch (err) {
+            const message = err instanceof Error ? err.message : String(err);
+            this.logger.error(
+                `publish_error routingKey=${routingKey} order=${dto.orderId} cid=${correlationId} err=${message}`,
+            );
+        }
     }
 }

@@ -1,0 +1,43 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+# Cancela execução anterior se houver novo push na mesma branch
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    middleware:
+        name: Middleware (build + tests)
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: middleware
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20'
+                  cache: 'npm'
+                  cache-dependency-path: middleware/package-lock.json
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Build
+              run: npm run build
+
+            - name: Unit tests
+              run: npm test -- --ci --reporters=default
+
+            - name: E2E tests
+              run: npm run test:e2e -- --ci --reporters=default

@@ -1,6 +1,8 @@
 import { Body, Controller, Headers, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 
+import { Roles } from '../auth/decorators/roles.decorator';
+
 import { OrderService } from '../services/order.service';
 import { ProcessOrderDto, ProcessOrderResponse } from './dto/process-order.dto';
 
@@ -9,6 +11,7 @@ export class OrderController {
     constructor(private readonly orderService: OrderService) {}
 
     @Post()
+    @Roles('service')
     @HttpCode(HttpStatus.OK)
     async process(
         @Body() dto: ProcessOrderDto,

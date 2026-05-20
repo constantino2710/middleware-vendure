@@ -1,26 +1,34 @@
-// Pessoa 3 — Consumer da fila orders.events.
-//
-// @Injectable()
-// export class NotificationConsumer {
-//   constructor(private readonly logger: PinoLogger) {}
-//
-//   @RabbitSubscribe({
-//     exchange: 'orders.events',
-//     routingKey: ['order.paid', 'order.failed'],
-//     queue: 'notification.events',
-//   })
-//   async handle(msg: { orderId: string; status: 'PAID' | 'FAILED'; timestamp: string; correlation_id: string }) {
-//     this.logger.info({
-//       correlation_id: msg.correlation_id,
-//       service: 'notification',
-//       event: 'order_event_received',
-//       status: msg.status,
-//       orderId: msg.orderId,
-//     });
-//     // (real) → enviar e-mail / push / SMS
-//   }
-// }
-//
-// Bônus:
-//   - rastrear messageId já processado (idempotência)
-//   - DLX + retry
+import { Injectable } from '@nestjs/common';
+import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
+import { PinoLogger } from 'nestjs-pino';
+
+import {
+    ORDER_FAILED_ROUTING_KEY,
+    ORDER_PAID_ROUTING_KEY,
+    ORDERS_EVENTS_EXCHANGE,
+    OrderEvent,
+} from './order-event';
+
+@Injectable()
+export class NotificationConsumer {
+    constructor(private readonly logger: PinoLogger) {
+        this.logger.setContext(NotificationConsumer.name);
+    }
+
+    @RabbitSubscribe({
+        exchange: ORDERS_EVENTS_EXCHANGE,
+        routingKey: [ORDER_PAID_ROUTING_KEY, ORDER_FAILED_ROUTING_KEY],
+        queue: 'notifications',
+        queueOptions: { durable: true },
+    })
+    async handleOrderEvent(message: OrderEvent): Promise<void> {
+        this.logger.info({
+            correlation_id: message.correlation_id,
+            service: 'notification-service',
+            event: 'order_event_received',
+            orderId: message.orderId,
+            status: message.status,
+            timestamp: message.timestamp,
+        });
+    }
+}
