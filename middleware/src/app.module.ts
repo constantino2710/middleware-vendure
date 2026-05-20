@@ -29,7 +29,7 @@ import { OrderService, PAYMENT_CLIENT, PUBLISHER } from './services/order.servic
                 genReqId: (req) =>
                     req.headers['x-correlation-id']?.toString() ?? crypto.randomUUID(),
                 customProps: () => ({ service: 'middleware' }),
-                transport: process.env.NODE_ENV !== 'production'
+                transport: process.env.NODE_ENV !== 'production'&& process.env.NODE_ENV !== 'test'
                     ? { target: 'pino-pretty' }
                     : undefined,
             },
