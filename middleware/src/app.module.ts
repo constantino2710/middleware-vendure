@@ -2,13 +2,11 @@ import { Module } from '@nestjs/common';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
+import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
+import configuration from './config/configuration';
 import { MetricsService } from './services/metrics.service';
 import { MetricsController } from './controllers/metrics.controller';
 import { CorrelationInterceptor } from './middlewares/correlation.interceptor';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { APP_GUARD } from '@nestjs/core';
-
-import configuration from './config/configuration';
 import { HttpPaymentClient } from './clients/payment.client';
 import { HealthController } from './controllers/health.controller';
 import { OrderController } from './controllers/order.controller';
@@ -35,6 +33,7 @@ import { OrderService, PAYMENT_CLIENT, PUBLISHER } from './services/order.servic
                     ? { target: 'pino-pretty' }
                     : undefined,
             },
+        }),
         RabbitMQModule.forRoot({
             exchanges: [
                 {
@@ -47,21 +46,17 @@ import { OrderService, PAYMENT_CLIENT, PUBLISHER } from './services/order.servic
             connectionInitOptions: { wait: false },
         }),
     ],
-    controllers: [HealthController, OrderController,MetricsController],
+    controllers: [HealthController, OrderController, MetricsController],
     providers: [
         OrderService,
         MetricsService,
-        { 
-            provide: PAYMENT_CLIENT, 
-            useClass: HttpPaymentClient 
+        {
+            provide: PAYMENT_CLIENT,
+            useClass: HttpPaymentClient,
         },
         {
             provide: APP_INTERCEPTOR,
             useClass: CorrelationInterceptor,
-        },
-        {
-            provide: PAYMENT_CLIENT,
-            useClass: HttpPaymentClient,
         },
         {
             provide: PUBLISHER,
