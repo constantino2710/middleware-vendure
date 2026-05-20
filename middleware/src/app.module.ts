@@ -58,7 +58,7 @@ import { OrderService, PAYMENT_CLIENT, PUBLISHER } from './services/order.servic
         {
             provide: APP_INTERCEPTOR,
             useClass: CorrelationInterceptor,
-        }
+        },
         {
             provide: PAYMENT_CLIENT,
             useClass: HttpPaymentClient,
